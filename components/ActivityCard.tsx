@@ -8,13 +8,20 @@ type Props = {
   value: string;
   icon: string;
   gradient?: readonly [string, string, ...string[]];
+  onPress?: () => void;
 };
 
-const ActivityCard = ({ title, value, icon, gradient }: Props) => {
+
+
+const ActivityCard = ({ title, value, icon, gradient, onPress}: Props) => {
   const hasGradient = gradient && gradient.length >= 2;
 
   return (
-    <TouchableOpacity style={[styles.card, hasGradient && { padding: 0 }]}>
+    
+    <TouchableOpacity 
+    style={[styles.card, hasGradient && { padding: 0 }]}
+    onPress={onPress}
+                      >
       {hasGradient ? (
         <LinearGradient colors={gradient} style={styles.gradientCard}>
           <Text style={styles.titleWhite}>{title}</Text>
@@ -29,6 +36,7 @@ const ActivityCard = ({ title, value, icon, gradient }: Props) => {
         </View>
       )}
     </TouchableOpacity>
+    
   );
 };
 
@@ -76,3 +84,4 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 });
+
