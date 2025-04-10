@@ -6,10 +6,13 @@ import { RootStackParamList } from '../navigation/RootNavigator';
 
 const OnboardingScreen = () => {
   const navigation = useNavigation() as NativeStackNavigationProp<RootStackParamList>;
-
+  
   const handleNext = () => {
-    navigation.replace('Root');
+    setTimeout(() => {
+      navigation.replace('Root');
+    }, 100); // petit délai pour laisser le temps au rendu de se finaliser
   };
+
 
   return (
     <View style={styles.container}>

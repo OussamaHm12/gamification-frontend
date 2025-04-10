@@ -20,6 +20,20 @@ const TabNavigator = () => {
         headerShown: false,
         tabBarActiveTintColor: '#FB8C00',
         tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          height: 70,
+          paddingBottom: 10,
+          paddingTop: 8,
+          borderTopLeftRadius: 16,
+          borderTopRightRadius: 16,
+          position: 'absolute',
+          backgroundColor: '#fff',
+          elevation: 10,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
         tabBarIcon: ({ color, size }: { color: string; size: number }) => {
           let iconName = 'home';
 
