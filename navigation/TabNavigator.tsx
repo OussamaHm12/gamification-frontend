@@ -1,16 +1,22 @@
+// ✅ navigation/TabNavigator.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
+import DefisScreen from '../screens/DefisScreen';
+import StoreScreen from '../screens/StoreScreen';
+import EnsembleScreen from '../screens/EnsembleScreen';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
-
-const DummyScreen = () => null;
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }: any) => ({
+      screenOptions={({
+        route,
+      }: {
+        route: { name: string };
+      }) => ({
         headerShown: false,
         tabBarActiveTintColor: '#FB8C00',
         tabBarInactiveTintColor: 'gray',
@@ -37,9 +43,9 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
-      <Tab.Screen name="Défis" component={DummyScreen} />
-      <Tab.Screen name="Ensemble" component={DummyScreen} />
-      <Tab.Screen name="Store" component={DummyScreen} />
+      <Tab.Screen name="Défis" component={DefisScreen} />
+      <Tab.Screen name="Ensemble" component={EnsembleScreen} />
+      <Tab.Screen name="Store" component={StoreScreen} />
     </Tab.Navigator>
   );
 };
