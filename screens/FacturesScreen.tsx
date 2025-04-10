@@ -1,4 +1,3 @@
-// ✅ screens/FacturesScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -8,7 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
-  ScrollView,
+  FlatList as RNFlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -67,22 +66,28 @@ const FacturesScreen = () => {
         <Ionicons name="search" size={20} color="#aaa" />
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filters}>
-        {filterOptions.map((option) => {
-          const isActive = selectedFilter === option;
-          return (
-            <TouchableOpacity
-              key={option}
-              style={[styles.filterButton, isActive && styles.filterButtonActive]}
-              onPress={() => setSelectedFilter(isActive ? '' : option)}
-            >
-              <Text style={[styles.filterText, isActive && styles.filterTextActive]}>
-                {option}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+      <View style={styles.filterContainer}>
+        <RNFlatList
+          data={filterOptions}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item}
+          contentContainerStyle={styles.filterRow}
+          renderItem={({ item }) => {
+            const isActive = selectedFilter === item;
+            return (
+              <TouchableOpacity
+                style={[styles.filterButton, isActive && styles.filterButtonActive]}
+                onPress={() => setSelectedFilter(isActive ? '' : item)}
+              >
+                <Text style={[styles.filterText, isActive && styles.filterTextActive]}>
+                  {item}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
 
       <View style={styles.sectionHeader}>
         <Text style={styles.details}>Détails</Text>
@@ -173,17 +178,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
-  filters: {
-    flexDirection: 'row',
+  filterContainer: {
+    height: 40,
     marginBottom: 10,
   },
+  filterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    width: 80,
+    height: 36,
     backgroundColor: '#eee',
-    borderRadius: 16,
+    borderRadius: 18,
     marginRight: 8,
-    minWidth: 70,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -193,6 +201,7 @@ const styles = StyleSheet.create({
   filterText: {
     color: '#333',
     fontWeight: '600',
+    textAlign: 'center',
   },
   filterTextActive: {
     color: '#fff',
