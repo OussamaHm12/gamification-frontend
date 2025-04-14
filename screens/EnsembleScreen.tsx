@@ -1,52 +1,132 @@
-// ✅ screens/EnsembleScreen.tsx
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-const ensembleChallenges = [
+type Friend = {
+  id: string;
+  name: string;
+  points: number;
+  level: number;
+  avatar: any;
+  challenges: string[];
+  badges: any[];
+};
+
+const friends: Friend[] = [
   {
     id: '1',
-    titre: 'Défi carte week-end',
-    participants: [
-      { name: 'Anas', points: 70 },
-      { name: 'Bachir', points: 40 },
-      { name: 'Sofia', points: 35 },
+    name: 'Anas',
+    points: 1240,
+    level: 4,
+    avatar: require('../assets/avatar1.png'),
+    challenges: ['Défi Facture', 'Défi Week-end'],
+    badges: [
+      require('../assets/badge1.png'),
+      require('../assets/badge2.png'),
+      require('../assets/badge3.png'),
     ],
+  },
+  {
+    id: '2',
+    name: 'Sofia',
+    points: 980,
+    level: 3,
+    avatar: require('../assets/avatar2.png'),
+    challenges: ['Défi Transport', 'Défi Carte'],
+    badges: [require('../assets/badge2.png'), require('../assets/badge4.png')],
   },
 ];
 
 const EnsembleScreen = () => {
+  const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const openFriendDetails = (friend: Friend) => {
+    setSelectedFriend(friend);
+    setModalVisible(true);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Défis en groupe</Text>
+      <View style={styles.header}>
+        <Ionicons name="people-circle" size={40} color="#FB8C00" />
+        <Text style={styles.title}>Vos amis dans le jeu</Text>
+        <Text style={styles.subtitle}>
+          Découvrez combien de points vos amis ont accumulés 🎮
+        </Text>
+      </View>
 
       <FlatList
-        data={ensembleChallenges}
+        data={friends}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <View style={styles.challengeBox}>
-            <Text style={styles.challengeTitle}>{item.titre}</Text>
-            <Text style={styles.challengeSubtitle}>{item.participants.length} participants</Text>
-
-            <View style={styles.rankingHeader}>
-              <Text style={styles.rankTitle}>Classement</Text>
-            </View>
-
-            {item.participants.map((p, index) => (
-              <View style={styles.participantRow} key={p.name}>
-                <View style={styles.rankLeft}>
-                  <Text style={styles.rankNumber}>#{index + 1}</Text>
-                  <Image
-                    source={require('../assets/avatar.png')}
-                    style={styles.avatar}
-                  />
-                  <Text style={styles.name}>{p.name}</Text>
-                </View>
-                <Text style={styles.points}>{p.points} pts</Text>
+          <TouchableOpacity style={styles.card} onPress={() => openFriendDetails(item)}>
+            <View style={styles.info}>
+              <Image source={item.avatar} style={styles.avatar} />
+              <View>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.level}>Total de points</Text>
               </View>
-            ))}
-          </View>
+            </View>
+            <View style={styles.pointsBox}>
+              <Text style={styles.pointsText}>{item.points}</Text>
+              <Text style={styles.unit}>pts</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
+
+      {/* Popup enrichi */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContent}>
+            <Image source={selectedFriend?.avatar} style={styles.modalAvatar} />
+            <Text style={styles.modalName}>{selectedFriend?.name}</Text>
+            <Text style={styles.modalPoints}>💰 {selectedFriend?.points} points</Text>
+            <Text style={styles.modalLevel}>🏆 Niveau {selectedFriend?.level}</Text>
+
+            {/* Défis récents */}
+            <Text style={styles.sectionTitle}>Derniers défis rejoints</Text>
+            <View style={styles.challengeList}>
+              {selectedFriend?.challenges.map((ch, index: number) => (
+                <View key={index} style={styles.challengeItem}>
+                  <Ionicons name="checkmark-circle" size={16} color="#32C17C" />
+                  <Text style={styles.challengeText}>{ch}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Badges */}
+            <Text style={styles.sectionTitle}>Badges gagnés</Text>
+            <View style={styles.badgesGrid}>
+              {selectedFriend?.badges.map((badge, index: number) => (
+                <View key={index} style={styles.badgeItem}>
+                  <Image source={badge} style={styles.badgeImage} />
+                </View>
+              ))}
+            </View>
+
+            <Pressable style={styles.closeBtn} onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeText}>Fermer</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -56,69 +136,158 @@ export default EnsembleScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F5F1',
-    padding: 20,
+    backgroundColor: '#FAF8F4',
+    paddingHorizontal: 20,
     paddingTop: 50,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  header: {
+    alignItems: 'center',
+    marginBottom: 24,
   },
-  challengeBox: {
-    backgroundColor: '#fff',
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    marginTop: 8,
+    color: '#333',
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#777',
+    textAlign: 'center',
+    marginTop: 4,
+    lineHeight: 18,
+  },
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 14,
     elevation: 2,
   },
-  challengeTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  challengeSubtitle: {
-    fontSize: 13,
-    color: '#888',
-    marginBottom: 12,
-  },
-  rankingHeader: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 6,
-    marginBottom: 10,
-  },
-  rankTitle: {
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-  participantRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  rankLeft: {
+  info: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  rankNumber: {
-    fontWeight: 'bold',
-    marginRight: 8,
-    color: '#7A4CD9',
   },
   avatar: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    marginRight: 8,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    marginRight: 12,
   },
   name: {
-    fontSize: 14,
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#2E2E2E',
   },
-  points: {
+  level: {
+    fontSize: 12,
+    color: '#999',
+  },
+  pointsBox: {
+    backgroundColor: '#FFF3E0',
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  pointsText: {
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#FB8C00',
+  },
+  unit: {
+    fontSize: 12,
+    color: '#FB8C00',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 20,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+  },
+  modalAvatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    marginBottom: 12,
+  },
+  modalName: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  modalPoints: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FB8C00',
+  },
+  modalLevel: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 16,
+    color: '#7A4CD9',
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#444',
+    alignSelf: 'flex-start',
+    marginTop: 14,
+    marginBottom: 6,
+  },
+  challengeList: {
+    alignSelf: 'flex-start',
+    width: '100%',
+    marginBottom: 10,
+  },
+  challengeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  challengeText: {
+    fontSize: 13,
+    marginLeft: 6,
+    color: '#555',
+  },
+  badgesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+  badgeItem: {
+    backgroundColor: '#F3F4F6',
+    padding: 6,
+    margin: 6,
+    borderRadius: 12,
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeImage: {
+    width: 32,
+    height: 32,
+    resizeMode: 'contain',
+  },
+  closeBtn: {
+    backgroundColor: '#FB8C00',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 10,
+  },
+  closeText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });

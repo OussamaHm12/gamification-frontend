@@ -1,13 +1,16 @@
-// ✅ screens/DefisScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import moment from 'moment';
+import 'moment/locale/fr';
+
+moment.locale('fr');
 
 const autresDefis = [
   {
     id: '1',
     titre: 'Payer 3 factures via Pocket Bank',
-    amis: 2,
+    amis: 3,
   },
   {
     id: '2',
@@ -17,56 +20,64 @@ const autresDefis = [
 ];
 
 const DefisScreen = () => {
+  const today = moment().format('dddd, D MMM');
+  const formattedDate = today.charAt(0).toUpperCase() + today.slice(1);
+
   return (
     <View style={styles.container}>
-      {/* En-tête */}
-      <View style={styles.header}>
+      <View style={styles.topBar}>
         <Image source={require('../assets/avatar.png')} style={styles.avatar} />
-        <View style={styles.rightHeader}>
-          <Ionicons name="trophy" size={20} color="#FB8C00" />
-          <Text style={styles.points}>1190</Text>
+        <View style={styles.pointsBox}>
+          <Ionicons name="pricetag" size={18} color="#FB8C00" />
+          <Text style={styles.pointsText}>1190</Text>
         </View>
       </View>
 
-      <Text style={styles.date}>Vendredi, 29 Dec</Text>
+      <Text style={styles.date}>{formattedDate}</Text>
 
-      {/* Défi en cours */}
       <View style={styles.challengeBox}>
-        <Image source={require('../assets/badge.png')} style={styles.badge} />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.challengeTitle}>Vous y êtes presque !</Text>
-          <Text style={styles.challengeSubtitle}>Virement restant à gagner : 5</Text>
+        <Image source={require('../assets/badge.png')} style={styles.challengeImage} />
+        <Text style={styles.challengeTitle}>Vous y êtes presque !</Text>
+        <Text style={styles.challengeSubtitle}>Virement restant à gagner</Text>
+        <Text style={styles.challengeCount}>5</Text>
 
-          <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: '75%' }]} />
-            <Ionicons
-              name="lock-closed-outline"
-              size={16}
-              color="#7A4CD9"
-              style={styles.rewardIcon}
-            />
+        <View style={styles.progressBarContainer}>
+          <View style={[styles.progressBar, { width: '75%' }]} />
+          <Ionicons name="trophy" size={18} color="#7A4CD9" style={styles.rewardIcon} />
+        </View>
+
+        <View style={styles.progressLabelRow}>
+          <Text style={styles.progressLabel}>15 virements faits</Text>
+          <Text style={styles.progressLabel}>But 20</Text>
+        </View>
+
+        <View style={styles.statsBox}>
+          <View style={styles.stat}>
+            <Text style={styles.statTitle}>Moyenne</Text>
+            <Text style={styles.statValue}>4 Virement</Text>
           </View>
-
-          <View style={styles.statsRow}>
-            <Text style={styles.statsText}>Moyenne
-4 Virement</Text>
-            <Text style={styles.statsText}>Meilleur
-5 Virement</Text>
+          <View style={styles.stat}>
+            <Text style={styles.statTitle}>Meilleur</Text>
+            <Text style={styles.statValue}>5 Virement</Text>
           </View>
         </View>
       </View>
 
-      {/* Autres défis */}
-      <Text style={styles.sectionTitle}>Autres Défis</Text>
-      <Text style={styles.sectionDate}>Dec , 2025</Text>
+      <View style={styles.otherChallengesHeader}>
+        <Ionicons name="chevron-back" size={20} />
+        <Text style={styles.otherChallengesDate}>Dec , 2025</Text>
+        <Ionicons name="chevron-forward" size={20} />
+      </View>
 
       <FlatList
         data={autresDefis}
         keyExtractor={(item) => item.id}
-        horizontal={false}
         renderItem={({ item }) => (
-          <View style={styles.otherDefiBox}>
-            <Text style={styles.otherDefiText}>{item.titre}</Text>
+          <View style={styles.otherChallengeItem}>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <Text style={styles.otherChallengeText}>{item.titre}</Text>
+              <Text style={styles.challengeFriends}>{item.amis} amis sur ce challenge</Text>
+            </View>
             <TouchableOpacity style={styles.joinButton}>
               <Text style={styles.joinText}>Rejoindre</Text>
             </TouchableOpacity>
@@ -82,11 +93,11 @@ export default DefisScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F5F1',
+    backgroundColor: '#FDF8F3',
     paddingHorizontal: 20,
     paddingTop: 50,
   },
-  header: {
+  topBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -96,102 +107,140 @@ const styles = StyleSheet.create({
     height: 36,
     borderRadius: 18,
   },
-  rightHeader: {
+  pointsBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    backgroundColor: '#FFF3CD',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
   },
-  points: {
+  pointsText: {
     fontWeight: 'bold',
     color: '#FB8C00',
-    fontSize: 16,
+    marginLeft: 6,
   },
   date: {
-    marginTop: 6,
-    marginBottom: 16,
+    marginTop: 8,
+    marginBottom: 20,
     fontSize: 14,
-    color: '#555',
+    textAlign: 'center',
+    color: '#888',
   },
   challengeBox: {
-    flexDirection: 'row',
     backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 16,
+    borderRadius: 20,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    alignItems: 'center',
     marginBottom: 20,
     elevation: 2,
   },
-  badge: {
-    width: 60,
-    height: 60,
-    marginRight: 12,
+  challengeImage: {
+    width: 80,
+    height: 80,
+    marginBottom: 12,
   },
   challengeTitle: {
-    fontWeight: 'bold',
     fontSize: 16,
-    marginBottom: 4,
+    fontWeight: 'bold',
+    color: '#444',
   },
   challengeSubtitle: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 12,
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 6,
+  },
+  challengeCount: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
   progressBarContainer: {
+    width: '100%',
     height: 10,
-    backgroundColor: '#DDD2C0',
+    backgroundColor: '#E9E2D8',
     borderRadius: 5,
-    overflow: 'hidden',
-    marginBottom: 12,
+    marginBottom: 6,
     position: 'relative',
   },
   progressBar: {
     height: 10,
-    backgroundColor: '#35B36A',
+    backgroundColor: '#32C17C',
+    borderRadius: 5,
   },
   rewardIcon: {
     position: 'absolute',
-    right: -8,
-    top: -16,
+    right: -10,
+    top: -14,
   },
-  statsRow: {
+  progressLabelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 6,
+    width: '100%',
+    marginBottom: 12,
   },
-  statsText: {
+  progressLabel: {
     fontSize: 12,
-    textAlign: 'center',
+    color: '#444',
   },
-  sectionTitle: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 4,
+  statsBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
-  sectionDate: {
+  stat: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statTitle: {
+    fontSize: 12,
     color: '#888',
-    marginBottom: 12,
   },
-  otherDefiBox: {
-    backgroundColor: '#E7DED3',
-    padding: 12,
-    borderRadius: 12,
-    marginBottom: 12,
+  statValue: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#444',
+  },
+  otherChallengesHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 12,
+    marginTop: 12,
   },
-  otherDefiText: {
-    flex: 1,
-    fontSize: 13,
+  otherChallengesDate: {
+    fontSize: 14,
     fontWeight: '500',
-    marginRight: 12,
+  },
+  otherChallengeItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#E7DED3',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
+  },
+  otherChallengeText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#333',
+  },
+  challengeFriends: {
+    fontSize: 11,
+    color: '#999',
+    marginTop: 4,
   },
   joinButton: {
     backgroundColor: '#fff',
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 10,
+    flexShrink: 0,
   },
   joinText: {
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: 'bold',
   },
 });

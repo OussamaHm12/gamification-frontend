@@ -1,5 +1,4 @@
-// ✅ screens/StoreScreen.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,69 +7,115 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
+const { width } = Dimensions.get('window');
+
 const badges = [
-  { id: '1', name: 'Virement Hero', points: 2000, icon: require('../assets/badge1.png') },
-  { id: '2', name: 'Epargne Master', points: 8000, icon: require('../assets/badge2.png') },
+  { id: '1', name: 'Virement Hero', points: 2000, icon: require('../assets/badge1.png'), category: 'populaire' },
+  { id: '2', name: 'Epargne Master', points: 8000, icon: require('../assets/badge2.png'), category: 'haut' },
 ];
 
 const avatars = [
-  { id: '1', name: 'Carte Maestro', points: 10000, icon: require('../assets/avatar1.png') },
-  { id: '2', name: 'Epargnant Express', points: 10000, icon: require('../assets/avatar2.png') },
+  { id: '1', name: 'Carte Maestro', points: 10000, icon: require('../assets/avatar1.png'), category: 'populaire' },
+  { id: '2', name: 'Épargnant Express', points: 10000, icon: require('../assets/avatar2.png'), category: 'nouveau' },
 ];
 
+const filters = ['populaire', 'haut', 'nouveau'];
+
 const StoreScreen = () => {
+  const [search, setSearch] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('populaire');
+
+  const filteredBadges = badges.filter(
+    (item) =>
+      item.category === selectedFilter &&
+      item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const filteredAvatars = avatars.filter(
+    (item) =>
+      item.category === selectedFilter &&
+      item.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const renderCard = ({ item }) => (
+    <View style={styles.card}>
+      <Image source={item.icon} style={styles.cardImage} />
+      <Text style={styles.cardName}>{item.name}</Text>
+      <Text style={styles.cardPoints}>{item.points.toLocaleString()} pts</Text>
+      <TouchableOpacity style={styles.cardAdd}>
+        <Text style={styles.cardAddText}>+</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Image source={require('../assets/avatar.png')} style={styles.avatar} />
         <View style={styles.rightHeader}>
-          <Ionicons name="trophy" size={20} color="#FB8C00" />
+          <Ionicons name="pricetag" size={18} color="#fff" style={styles.pointsIcon} />
           <Text style={styles.points}>1190</Text>
         </View>
       </View>
 
+      <Text style={styles.date}>Vendredi, 29 Dec</Text>
+
       {/* Search bar */}
       <View style={styles.searchContainer}>
-        <TextInput style={styles.input} placeholder="Recherche pour avatar badge" />
-        <Ionicons name="options-outline" size={20} color="#333" style={styles.filterIcon} />
+        <TextInput
+          style={styles.input}
+          placeholder="search pour avatar badge"
+          value={search}
+          onChangeText={setSearch}
+        />
+        <Ionicons name="filter-outline" size={20} color="#333" />
       </View>
 
-      {/* Badges */}
+      {/* Filters */}
+      <View style={styles.filterBar}>
+        {filters.map((f) => (
+          <TouchableOpacity
+            key={f}
+            style={[styles.filterButton, selectedFilter === f && styles.filterButtonActive]}
+            onPress={() => setSelectedFilter(f)}
+          >
+            <Text
+              style={[
+                styles.filterText,
+                selectedFilter === f && styles.filterTextActive,
+              ]}
+            >
+              {f}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Badges Section */}
       <Text style={styles.sectionTitle}>badges principaux</Text>
       <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={badges}
+        data={filteredBadges}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={item.icon} style={styles.cardImage} />
-            <Text style={styles.cardName}>{item.name}</Text>
-            <Text style={styles.cardPoints}>{item.points.toLocaleString()} pts</Text>
-            <TouchableOpacity style={styles.cardAdd}><Text style={styles.cardAddText}>+</Text></TouchableOpacity>
-          </View>
-        )}
+        renderItem={renderCard}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.grid}
       />
 
-      {/* Avatars */}
-      <Text style={styles.sectionTitle}>Avatar</Text>
+      {/* Avatars Section */}
+      <Text style={styles.sectionTitleSecondary}>Avatar</Text>
       <FlatList
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        data={avatars}
+        data={filteredAvatars}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={item.icon} style={styles.cardImage} />
-            <Text style={styles.cardName}>{item.name}</Text>
-            <Text style={styles.cardPoints}>{item.points.toLocaleString()} pts</Text>
-            <TouchableOpacity style={styles.cardAdd}><Text style={styles.cardAddText}>+</Text></TouchableOpacity>
-          </View>
-        )}
+        renderItem={renderCard}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.grid}
       />
     </View>
   );
@@ -81,9 +126,9 @@ export default StoreScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F9F5F1',
     paddingTop: 50,
     paddingHorizontal: 20,
-    backgroundColor: '#F9F5F1',
   },
   header: {
     flexDirection: 'row',
@@ -98,69 +143,112 @@ const styles = StyleSheet.create({
   rightHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    backgroundColor: '#FFA726',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    gap: 4,
   },
   points: {
     fontWeight: 'bold',
-    color: '#FB8C00',
-    fontSize: 16,
+    color: '#fff',
+  },
+  pointsIcon: {
+    marginRight: 4,
+  },
+  date: {
+    textAlign: 'center',
+    color: '#666',
+    marginVertical: 10,
   },
   searchContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     paddingHorizontal: 12,
-    borderRadius: 12,
-    marginVertical: 20,
+    paddingVertical: 6,
+    marginBottom: 12,
   },
   input: {
     flex: 1,
-    height: 40,
+    fontSize: 14,
   },
-  filterIcon: {
-    marginLeft: 8,
+  filterBar: {
+    flexDirection: 'row',
+    marginBottom: 12,
+  },
+  filterButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#eee',
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  filterButtonActive: {
+    backgroundColor: '#7A4CD9',
+  },
+  filterText: {
+    fontSize: 13,
+    color: '#555',
+  },
+  filterTextActive: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   sectionTitle: {
     fontWeight: 'bold',
     fontSize: 16,
-    marginBottom: 10,
-    marginTop: 20,
+    marginBottom: 8,
+  },
+  sectionTitleSecondary: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 8,
+    marginTop: 10,
+  },
+  grid: {
+    paddingBottom: 30,
+  },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
   card: {
-    width: 140,
     backgroundColor: '#fff',
+    width: (width - 60) / 2,
     borderRadius: 12,
-    padding: 12,
-    marginRight: 12,
+    padding: 14,
     alignItems: 'center',
+    elevation: 2,
   },
   cardImage: {
-    width: 56,
-    height: 56,
+    width: 50,
+    height: 50,
     marginBottom: 10,
+    resizeMode: 'contain',
   },
   cardName: {
-    fontSize: 13,
     fontWeight: '600',
+    fontSize: 13,
     textAlign: 'center',
-    marginBottom: 4,
   },
   cardPoints: {
-    fontSize: 12,
     color: '#FB8C00',
-    marginBottom: 6,
+    fontSize: 13,
+    marginVertical: 4,
   },
   cardAdd: {
     backgroundColor: '#FB8C00',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
   },
   cardAddText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 });
