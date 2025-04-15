@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import FacturesScreen from '../screens/FacturesScreen';
 import VirementsScreen from '../screens/VirementsScreen';
-import ConfirmPurchaseScreen from '../screens/ConfirmPurchaseScreen';
 
 
 export type RootStackParamList = {
@@ -24,7 +23,6 @@ const RootNavigator = () => {
       <Stack.Screen name="Root" component={TabNavigator} />
       <Stack.Screen name="Factures" component={FacturesScreen} />
       <Stack.Screen name="Virements" component={VirementsScreen} />
-      <Stack.Screen name="ConfirmPurchase" component={ConfirmPurchaseScreen} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 };
