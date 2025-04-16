@@ -1,90 +1,193 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from 'react-native';
+// ✅ DefisScreen_Final.tsx
+import React, { useState } from 'react';
+import {
+  View, Text, StyleSheet, Image, FlatList, TouchableOpacity, Modal, TextInput, ScrollView
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import moment from 'moment';
-import 'moment/locale/fr';
 
-moment.locale('fr');
+const initialDefis = [
+  { id: '1', name: 'Défi virements', progress: 75, moyenne: 4, meilleur: 5, total: 15, goal: 20 },
+  { id: '2', name: 'Défi carte week-end', progress: 60, moyenne: 3, meilleur: 4, total: 12, goal: 20 },
+];
 
 const autresDefis = [
-  {
-    id: '1',
-    titre: 'Payer 3 factures via Pocket Bank',
-    amis: 3,
-  },
-  {
-    id: '2',
-    titre: 'Effectuer plus de 5 paiements par carte',
-    amis: 3,
-  },
+  { id: '3', titre: 'Payer 3 factures via Pocket Bank', amis: 3 },
+  { id: '4', titre: 'Effectuer plus de 5 paiements par carte', amis: 3 },
 ];
 
 const DefisScreen = () => {
-  const today = moment().format('dddd, D MMM');
-  const formattedDate = today.charAt(0).toUpperCase() + today.slice(1);
+  const [defis, setDefis] = useState(initialDefis);
+  const [selectedDefi, setSelectedDefi] = useState(initialDefis[0]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [createModal, setCreateModal] = useState(false);
+  const [renameModal, setRenameModal] = useState(false);
+  const [renameValue, setRenameValue] = useState(selectedDefi.name);
+  const [newDefi, setNewDefi] = useState({
+    name: '', description: '', type: '', goal: '', period: '',
+  });
+
+  const handleCreateDefi = () => {
+    if (newDefi.name) {
+      const newEntry = {
+        id: Date.now().toString(),
+        name: newDefi.name,
+        progress: 0,
+        moyenne: 0,
+        meilleur: 0,
+        total: 0,
+        goal: parseInt(newDefi.goal),
+      };
+      const updated = [...defis, newEntry];
+      setDefis(updated);
+      setSelectedDefi(newEntry);
+      setCreateModal(false);
+      setNewDefi({ name: '', description: '', type: '', goal: '', period: '' });
+    }
+  };
+
+  const handleRenameDefi = () => {
+    const updated = defis.map((d) =>
+      d.id === selectedDefi.id ? { ...d, name: renameValue } : d
+    );
+    setDefis(updated);
+    const updatedSelected = updated.find((d) => d.id === selectedDefi.id);
+    if (updatedSelected) setSelectedDefi(updatedSelected);
+    setRenameModal(false);
+  };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={{ paddingBottom: 100, paddingTop: 50, paddingHorizontal: 20 }} showsVerticalScrollIndicator={false}>
       <View style={styles.topBar}>
-        <Image source={require('../assets/avatar.png')} style={styles.avatar} />
-        <View style={styles.pointsBox}>
-          <Ionicons name="pricetag" size={18} color="#FB8C00" />
-          <Text style={styles.pointsText}>1190</Text>
-        </View>
-      </View>
+        <TouchableOpacity onPress={() => setCreateModal(true)} style={styles.iconBtn}>
+          <Ionicons name="add-circle-outline" size={24} color="#7A4CD9" />
+        </TouchableOpacity>
 
-      <Text style={styles.date}>{formattedDate}</Text>
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.defiSelector}>
+          <Text style={styles.defiName}>{selectedDefi.name}</Text>
+          <Ionicons name="chevron-down" size={18} color="#333" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => {
+          setRenameValue(selectedDefi.name);
+          setRenameModal(true);
+        }} style={styles.iconBtn}>
+          <Ionicons name="create-outline" size={20} color="#7A4CD9" />
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.challengeBox}>
         <Image source={require('../assets/badge.png')} style={styles.challengeImage} />
         <Text style={styles.challengeTitle}>Vous y êtes presque !</Text>
         <Text style={styles.challengeSubtitle}>Virement restant à gagner</Text>
-        <Text style={styles.challengeCount}>5</Text>
-
+        <Text style={styles.challengeCount}>{selectedDefi.goal - selectedDefi.total}</Text>
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBar, { width: '75%' }]} />
+          <View style={[styles.progressBar, { width: `${selectedDefi.progress}%` }]} />
           <Ionicons name="trophy" size={18} color="#7A4CD9" style={styles.rewardIcon} />
         </View>
-
         <View style={styles.progressLabelRow}>
-          <Text style={styles.progressLabel}>15 virements faits</Text>
-          <Text style={styles.progressLabel}>But 20</Text>
+          <Text style={styles.progressLabel}>{selectedDefi.total} virements faits</Text>
+          <Text style={styles.progressLabel}>But {selectedDefi.goal}</Text>
         </View>
-
         <View style={styles.statsBox}>
-          <View style={styles.stat}>
-            <Text style={styles.statTitle}>Moyenne</Text>
-            <Text style={styles.statValue}>4 Virement</Text>
+          <View style={styles.stat}><Text style={styles.statTitle}>Moyenne</Text><Text style={styles.statValue}>{selectedDefi.moyenne}</Text></View>
+          <View style={styles.stat}><Text style={styles.statTitle}>Meilleur</Text><Text style={styles.statValue}>{selectedDefi.meilleur}</Text></View>
+        </View>
+
+        {/* Classement intégré */}
+        <Text style={styles.sectionTitle}>Classement</Text>
+        {[{ name: 'Anas', pts: 75 }, { name: 'Bachir', pts: 60 }, { name: 'Sofia', pts: 55 }].map((p, i) => (
+          <View key={i} style={styles.rankingRow}>
+            <Text>{['🥇', '🥈', '🥉'][i]} {p.name}</Text>
+            <Text style={{ fontWeight: 'bold' }}>{p.pts} pts</Text>
           </View>
-          <View style={styles.stat}>
-            <Text style={styles.statTitle}>Meilleur</Text>
-            <Text style={styles.statValue}>5 Virement</Text>
+        ))}
+      </View>
+
+      {/* Autres Défis */}
+      <Text style={styles.sectionTitle}>Autres Défis</Text>
+      {autresDefis.map((item) => {
+  const alreadyJoined = defis.some((d) => d.name === item.titre);
+  return (
+    <View key={item.id} style={styles.otherChallengeItem}>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.otherChallengeText}>{item.titre}</Text>
+        <Text style={styles.challengeFriends}>{item.amis} amis sur ce challenge</Text>
+      </View>
+      <TouchableOpacity
+        style={[
+          styles.joinButton,
+          alreadyJoined && { backgroundColor: '#ccc' }
+        ]}
+        onPress={() => {
+          if (!alreadyJoined) {
+            const newDefi = {
+              id: Date.now().toString(),
+              name: item.titre,
+              progress: 0,
+              moyenne: 0,
+              meilleur: 0,
+              total: 0,
+              goal: 10,
+            };
+            setDefis([...defis, newDefi]);
+            setSelectedDefi(newDefi);
+          }
+        }}
+        disabled={alreadyJoined}
+      >
+        <Text style={[styles.joinText, alreadyJoined && { color: '#666' }]}>
+          {alreadyJoined ? 'Déjà rejoint' : 'Rejoindre'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+})}
+
+
+      {/* Modals */}
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Changer de défi</Text>
+            {defis.map((d) => (
+              <TouchableOpacity key={d.id} onPress={() => { setSelectedDefi(d); setModalVisible(false); }}>
+                <Text style={styles.modalOption}>{d.name}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </View>
-      </View>
+      </Modal>
 
-      <View style={styles.otherChallengesHeader}>
-        <Ionicons name="chevron-back" size={20} />
-        <Text style={styles.otherChallengesDate}>Dec , 2025</Text>
-        <Ionicons name="chevron-forward" size={20} />
-      </View>
-
-      <FlatList
-        data={autresDefis}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.otherChallengeItem}>
-            <View style={{ flex: 1, marginRight: 10 }}>
-              <Text style={styles.otherChallengeText}>{item.titre}</Text>
-              <Text style={styles.challengeFriends}>{item.amis} amis sur ce challenge</Text>
-            </View>
-            <TouchableOpacity style={styles.joinButton}>
-              <Text style={styles.joinText}>Rejoindre</Text>
+      <Modal visible={renameModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Renommer le défi</Text>
+            <TextInput style={styles.input} value={renameValue} onChangeText={setRenameValue} />
+            <TouchableOpacity style={styles.createBtn} onPress={handleRenameDefi}>
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Valider</Text>
             </TouchableOpacity>
+            <TouchableOpacity onPress={() => setRenameModal(false)}><Text style={{ textAlign: 'center', marginTop: 8, color: '#999' }}>Annuler</Text></TouchableOpacity>
           </View>
-        )}
-      />
-    </View>
+        </View>
+      </Modal>
+
+      <Modal visible={createModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Créer un défi</Text>
+            <TextInput placeholder="Titre" style={styles.input} onChangeText={(text) => setNewDefi({ ...newDefi, name: text })} />
+            <TextInput placeholder="Description" style={styles.input} onChangeText={(text) => setNewDefi({ ...newDefi, description: text })} />
+            <TextInput placeholder="Type" style={styles.input} onChangeText={(text) => setNewDefi({ ...newDefi, type: text })} />
+            <TextInput placeholder="Objectif (nombre)" keyboardType="numeric" style={styles.input} onChangeText={(text) => setNewDefi({ ...newDefi, goal: text })} />
+            <TextInput placeholder="Période" style={styles.input} onChangeText={(text) => setNewDefi({ ...newDefi, period: text })} />
+            <TouchableOpacity style={styles.createBtn} onPress={handleCreateDefi}>
+              <Text style={{ color: '#fff', fontWeight: 'bold' }}>Créer</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCreateModal(false)}><Text style={{ textAlign: 'center', marginTop: 8, color: '#999' }}>Annuler</Text></TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </ScrollView>
   );
 };
 
@@ -92,7 +195,7 @@ export default DefisScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: '#FDF8F3',
     paddingHorizontal: 20,
     paddingTop: 50,
@@ -102,67 +205,54 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+  iconBtn: {
+    padding: 8,
   },
-  pointsBox: {
+  defiSelector: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFF3CD',
-    paddingHorizontal: 10,
+    backgroundColor: '#eee',
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 16,
   },
-  pointsText: {
+  defiName: {
     fontWeight: 'bold',
-    color: '#FB8C00',
-    marginLeft: 6,
-  },
-  date: {
-    marginTop: 8,
-    marginBottom: 20,
-    fontSize: 14,
-    textAlign: 'center',
-    color: '#888',
+    marginRight: 6,
   },
   challengeBox: {
     backgroundColor: '#fff',
     borderRadius: 20,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+    padding: 20,
     alignItems: 'center',
-    marginBottom: 20,
+    marginVertical: 16,
     elevation: 2,
   },
   challengeImage: {
-    width: 80,
-    height: 80,
-    marginBottom: 12,
+    width: 70,
+    height: 70,
+    marginBottom: 10,
   },
   challengeTitle: {
-    fontSize: 16,
     fontWeight: 'bold',
-    color: '#444',
+    fontSize: 16,
   },
   challengeSubtitle: {
     fontSize: 13,
     color: '#666',
-    marginBottom: 6,
   },
   challengeCount: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginVertical: 12,
   },
   progressBarContainer: {
     width: '100%',
     height: 10,
     backgroundColor: '#E9E2D8',
     borderRadius: 5,
-    marginBottom: 6,
     position: 'relative',
+    marginBottom: 6,
   },
   progressBar: {
     height: 10,
@@ -171,23 +261,23 @@ const styles = StyleSheet.create({
   },
   rewardIcon: {
     position: 'absolute',
-    right: -10,
+    right: -12,
     top: -14,
   },
   progressLabelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   progressLabel: {
     fontSize: 12,
-    color: '#444',
   },
   statsBox: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    marginTop: 8,
   },
   stat: {
     alignItems: 'center',
@@ -200,22 +290,23 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#444',
   },
-  otherChallengesHeader: {
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  rankingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-    marginTop: 12,
-  },
-  otherChallengesDate: {
-    fontSize: 14,
-    fontWeight: '500',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    marginBottom: 6,
   },
   otherChallengeItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#E7DED3',
     borderRadius: 14,
@@ -237,10 +328,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 10,
-    flexShrink: 0,
   },
   joinText: {
     fontSize: 13,
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: '#00000055',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalBox: {
+    backgroundColor: '#fff',
+    width: '80%',
+    padding: 20,
+    borderRadius: 16,
+    elevation: 4,
+  },
+  modalTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  modalOption: {
+    paddingVertical: 10,
+    fontSize: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  input: {
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  createBtn: {
+    backgroundColor: '#7A4CD9',
+    padding: 12,
+    alignItems: 'center',
+    borderRadius: 10,
   },
 });
