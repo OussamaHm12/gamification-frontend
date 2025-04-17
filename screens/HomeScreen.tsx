@@ -45,17 +45,17 @@ const HomeScreen = () => {
       <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 100 }}>
         <Text style={styles.sectionTitle}>Mes interactions</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
-          <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Factures')}>
+          <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Interactions')}>
             <Ionicons name="receipt-outline" size={24} color="#FB8C00" />
             <Text style={styles.hCardTitle}>Factures</Text>
             <Text style={styles.hCardValue}>7</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Virements')}>
+          <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Interactions')}>
             <Ionicons name="card-outline" size={24} color="#FB8C00" />
             <Text style={styles.hCardTitle}>Carte</Text>
             <Text style={styles.hCardValue}>6</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Virements')}>
+          <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Interactions')}>
             <Ionicons name="swap-horizontal-outline" size={24} color="#FB8C00" />
             <Text style={styles.hCardTitle}>Virements</Text>
             <Text style={styles.hCardValue}>15</Text>
