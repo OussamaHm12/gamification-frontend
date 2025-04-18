@@ -1,10 +1,10 @@
-// ✅ navigation/TabNavigator.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import DefisScreen from '../screens/DefisScreen';
 import StoreScreen from '../screens/StoreScreen';
-import EnsembleScreen from '../screens/EnsembleScreen';
+// ✅ Remplace EnsembleScreen par BadgeProfileScreen
+import BadgeProfileScreen from '../screens/BadgeProfileScreen';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
@@ -44,8 +44,8 @@ const TabNavigator = () => {
             case 'Défis':
               iconName = 'trophy-outline';
               break;
-            case 'Ensemble':
-              iconName = 'people-outline';
+            case 'Ma page':
+              iconName = 'person-outline';
               break;
             case 'Store':
               iconName = 'cart-outline';
@@ -58,8 +58,9 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
       <Tab.Screen name="Défis" component={DefisScreen} />
-      <Tab.Screen name="Ensemble" component={EnsembleScreen} />
       <Tab.Screen name="Store" component={StoreScreen} />
+      {/* ✅ Onglet "Ma page" à la place de Ensemble */}
+      <Tab.Screen name="Ma page" component={BadgeProfileScreen} />
     </Tab.Navigator>
   );
 };
