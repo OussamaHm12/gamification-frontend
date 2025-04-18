@@ -41,7 +41,7 @@ const TabNavigator = () => {
             case 'Accueil':
               iconName = 'home';
               break;
-            case 'Défis':
+            case 'Partage':
               iconName = 'trophy-outline';
               break;
             case 'Ma page':
@@ -57,9 +57,8 @@ const TabNavigator = () => {
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
-      <Tab.Screen name="Défis" component={DefisScreen} />
+      <Tab.Screen name="Partage" component={DefisScreen} />
       <Tab.Screen name="Store" component={StoreScreen} />
-      {/* ✅ Onglet "Ma page" à la place de Ensemble */}
       <Tab.Screen name="Ma page" component={BadgeProfileScreen} />
     </Tab.Navigator>
   );

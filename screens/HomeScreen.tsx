@@ -104,7 +104,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* 🎖️ Badges récents */}
+        {/* 🎖️ Badges récents
         <Text style={styles.sectionTitle}>Badges récents</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {recentBadges.map((badge) => (
@@ -117,7 +117,7 @@ const HomeScreen = () => {
               <Text style={styles.badgeName}>{badge.name}</Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
+        </ScrollView> */}
       </ScrollView>
     </View>
   );

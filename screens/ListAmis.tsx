@@ -46,7 +46,7 @@ const friends: Friend[] = [
   },
 ];
 
-const EnsembleScreen = () => {
+const ListAmis = () => {
   const [selectedFriend, setSelectedFriend] = useState<Friend | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -131,7 +131,7 @@ const EnsembleScreen = () => {
   );
 };
 
-export default EnsembleScreen;
+export default ListAmis;
 
 const styles = StyleSheet.create({
   container: {
