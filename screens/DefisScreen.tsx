@@ -6,70 +6,80 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-const podium = [
-  { name: 'Hassan', position: 1 },
-  { name: 'Vous', position: 2 },
-  { name: 'Youssef', position: 3 },
+const leaderboard = [
+  { name: 'Rachid', avatar: require('../assets/avatar1.png'), steps: 9800 },
+  { name: 'mansourianas01', avatar: require('../assets/avatar2.png'), steps: 8700 },
+  { name: 'Zakariae', avatar: require('../assets/avatar3.png'), steps: 8200 },
+  { name: 'You', avatar: require('../assets/avatar4.png'), steps: 7800 },
+  { name: 'Achraf', avatar: require('../assets/avatar5.png'), steps: 7600 },
 ];
 
 const DefisScreen = () => {
+  const navigation = useNavigation();
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* Header */}
-      <Text style={styles.header}>Partage</Text>
+    <View style={styles.container}>
+      {/* Header Fixe */}
+      <Text style={styles.header}>Together</Text>
 
-      {/* Carte Profil */}
-      <View style={styles.profileCard}>
-        <Image source={require('../assets/profile_icon.png')} style={styles.avatar} />
-        <View style={styles.infoBox}>
-          <Text style={styles.levelText}>Débutant</Text>
-          <Text style={styles.levelLabel}>Niveau</Text>
-          <Text style={styles.levelValue}>9</Text>
-        </View>
-        <View style={styles.separator} />
-        <View style={styles.infoBox}>
-          <Text style={styles.levelLabel}>Amis</Text>
-          <Text style={styles.levelValue}>177</Text>
-        </View>
-      </View>
-
-      {/* Bouton Créer un défi */}
-      <TouchableOpacity style={styles.createBtn}>
-        <Text style={styles.createBtnText}>Créer un défi</Text>
-      </TouchableOpacity>
-
-      {/* Classement */}
-      <Text style={styles.sectionTitle}>Classement nombre de pas</Text>
-      <View style={styles.podiumRow}>
-        {podium.map((item, index) => (
-          <View key={index} style={styles.podium}>
-            <Ionicons name="person-circle" size={36} color="#32C17C" />
-            <Text style={styles.podiumName}>{item.name}</Text>
-            <View style={[styles.bar, { height: 50 - index * 10 }]} />
-            <Text style={styles.podiumRank}>{item.position}</Text>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* Profil */}
+        <View style={styles.profileCard}>
+          <Image source={require('../assets/profile_icon.png')} style={styles.profileIcon} />
+          <View style={styles.profileInfo}>
+            <Text style={styles.label}>Niveau</Text>
+            <Text style={styles.value}>2</Text>
           </View>
-        ))}
-      </View>
-
-      {/* Défi Populaire */}
-      <View style={styles.challengeCard}>
-        <Text style={styles.challengeTitle}>Désert, avril</Text>
-        <Text style={styles.challengeDesc}>Rejoignez-nous et restons actifs ensemble.</Text>
-        <View style={styles.challengeFooter}>
-          <View>
-            <Text style={styles.participantLabel}>Participants</Text>
-            <Text style={styles.participantValue}>827 534</Text>
-          </View>
-          <TouchableOpacity style={styles.joinBtn}>
-            <Text style={styles.joinBtnText}>Rejoindre</Text>
+          <View style={styles.separator} />
+          <TouchableOpacity
+            style={styles.profileInfo}
+            onPress={() => navigation.navigate('Friends', { defaultTab: 'Friends' })}
+          >
+            <Text style={styles.label}>Amis</Text>
+            <Text style={[styles.value]}>9</Text>
           </TouchableOpacity>
-          <Image source={require('../assets/cactus.png')} style={styles.challengeImage} />
         </View>
-      </View>
-    </ScrollView>
+
+        {/* Créer un défi */}
+        <TouchableOpacity style={styles.createBtn}>
+          <Text style={styles.createBtnText}>Créer un défi</Text>
+        </TouchableOpacity>
+
+        {/* Classement des points */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Friends', { tab: 'Leaderboard' })}
+          style={styles.section}
+        >
+          <Text style={styles.sectionTitle}>Classement total des points</Text>
+          <View style={styles.podium}>
+            {leaderboard.map((user, index) => (
+              <View key={index} style={[styles.podiumStep, { height: 100 - index * 10 }]}>
+                <Image source={user.avatar} style={styles.avatar} />
+                <Text style={styles.rank}>{index + 1}</Text>
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.userName}>
+                  {user.name}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </TouchableOpacity>
+
+        {/* Défi populaire */}
+        <TouchableOpacity style={styles.challengeCard} onPress={() => navigation.navigate('DefiParcours')}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.challengeTitle}>Désert, avril</Text>
+            <Text style={styles.challengeDesc}>Rejoignez-nous et restons actifs ensemble.</Text>
+            <Text style={styles.stepCount}>Total des pas : <Text style={{ fontWeight: 'bold' }}>17 840</Text></Text>
+          </View>
+          <Image source={require('../assets/defis_logo.png')} style={styles.challengeImage} />
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -78,14 +88,14 @@ export default DefisScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF8F3',
-    paddingHorizontal: 20,
+    backgroundColor: '#F9F5F1',
     paddingTop: 50,
+    paddingHorizontal: 20,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 10,
   },
   profileCard: {
     backgroundColor: '#fff',
@@ -93,36 +103,30 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
     elevation: 2,
   },
-  avatar: {
-    width: 60,
-    height: 60,
-    marginRight: 20,
+  profileIcon: {
+    width: 50,
+    height: 50,
+    marginRight: 16,
   },
-  infoBox: {
+  profileInfo: {
     alignItems: 'center',
-    marginHorizontal: 8,
+    flex: 1,
   },
-  levelText: {
-    fontSize: 14,
-    fontWeight: '600',
+  label: {
+    fontSize: 13,
+    color: '#777',
   },
-  levelLabel: {
-    fontSize: 12,
-    color: '#888',
-  },
-  levelValue: {
+  value: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   separator: {
     width: 1,
     height: 40,
     backgroundColor: '#ccc',
-    marginHorizontal: 16,
   },
   createBtn: {
     backgroundColor: '#fff',
@@ -136,39 +140,60 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  section: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+    elevation: 1,
+  },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  podiumRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
   },
   podium: {
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
   },
-  podiumName: {
-    fontSize: 13,
-    marginTop: 4,
-  },
-  podiumRank: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 4,
-  },
-  bar: {
-    width: 16,
+  podiumStep: {
+    width: 60,
     backgroundColor: '#32C17C',
-    marginTop: 6,
-    borderRadius: 4,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 8,
+    position: 'relative',
+  },
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    position: 'absolute',
+    top: -20,
+  },
+  userName: {
+    fontSize: 11,
+    color: '#fff',
+    marginTop: 4,
+    maxWidth: 56,
+  },
+  rank: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginTop: 2,
   },
   challengeCard: {
     backgroundColor: '#fff',
     borderRadius: 20,
-    padding: 20,
+    padding: 16,
     elevation: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   challengeTitle: {
     fontSize: 16,
@@ -178,31 +203,11 @@ const styles = StyleSheet.create({
   challengeDesc: {
     fontSize: 13,
     color: '#666',
-    marginBottom: 16,
+    marginBottom: 10,
   },
-  challengeFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  participantLabel: {
-    fontSize: 12,
-    color: '#888',
-  },
-  participantValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  joinBtn: {
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#333',
-    paddingHorizontal: 18,
-    paddingVertical: 6,
-    borderRadius: 20,
-  },
-  joinBtnText: {
-    fontWeight: 'bold',
+  stepCount: {
+    fontSize: 14,
+    color: '#333',
   },
   challengeImage: {
     width: 60,

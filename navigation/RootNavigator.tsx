@@ -9,6 +9,9 @@ import InteractionsScreen from '../screens/InteractionsScreen'; // ou le bon che
 import DefiDetailScreen from '../screens/DefiDetailScreen';
 import BadgeProfileScreen from '../screens/BadgeProfileScreen';
 import NiveauScreen from '../screens/NiveauScreen';
+import FriendsScreen from '../screens/FriendsScreen';
+import DefiParcoursScreen from '../screens/DefiParcoursScreen';
+
 
 export type RootStackParamList = {
   Root: undefined;
@@ -18,6 +21,9 @@ export type RootStackParamList = {
   DefiDetail: { defiId: string };
   BadgeProfile: undefined;
   NiveauScreen: undefined;
+  Friends: { tab?: 'Leaderboard' | 'Friends' };
+  DefiDesert: undefined;
+  DefiParcours: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,7 +39,9 @@ const RootNavigator = () => {
       <Stack.Screen name="DefiDetail" component={DefiDetailScreen} />
       <Stack.Screen name="BadgeProfile" component={BadgeProfileScreen} />
       <Stack.Screen name="Niveau" component={NiveauScreen} />    
-    </Stack.Navigator>
+      <Stack.Screen name="Friends" component={FriendsScreen} />
+      <Stack.Screen name="DefiParcours" component={DefiParcoursScreen} />
+      </Stack.Navigator>
   );
 };
 
