@@ -1,4 +1,3 @@
-// ✅ screens/StoreScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -11,9 +10,10 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
 const badges = [
-  { id: '1', name: 'Virement Hero', points: 2000, icon: require('../assets/badge1.png') },
+  { id: '1', name: 'Virement Hero', points: 500, icon: require('../assets/badge1.png') },
   { id: '2', name: 'Epargne Master', points: 8000, icon: require('../assets/badge2.png') },
 ];
 
@@ -32,9 +32,13 @@ type ItemType = {
 };
 
 const StoreScreen = () => {
+  const navigation = useNavigation();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('populaire');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [purchasedItems, setPurchasedItems] = useState<string[]>([]);
+
+  const userPoints = 1190;
 
   const handleToggleSelect = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -43,48 +47,76 @@ const StoreScreen = () => {
     );
   };
 
-  const filteredBadges = badges.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+  const filteredBadges = badges.filter(
+    (item) =>
+      !purchasedItems.includes(item.id) &&
+      item.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const filteredAvatars = avatars.filter((item) =>
-    item.name.toLowerCase().includes(search.toLowerCase())
+  const filteredAvatars = avatars.filter(
+    (item) =>
+      !purchasedItems.includes(item.id) &&
+      item.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const renderCard = (item: ItemType) => {
     const isSelected = selectedItems.includes(item.id);
+    const isDisabled = item.points > userPoints;
 
     return (
       <TouchableOpacity
         key={item.id}
-        style={[styles.card, isSelected && styles.cardSelected]}
-        onPress={() => handleToggleSelect(item.id)}
-        activeOpacity={0.8}
+        style={[
+          styles.card,
+          isSelected && styles.cardSelected,
+          isDisabled && styles.cardDisabled,
+        ]}
+        onPress={() => !isDisabled && handleToggleSelect(item.id)}
+        activeOpacity={isDisabled ? 1 : 0.8}
       >
         <Image source={item.icon} style={styles.cardImage} />
         <Text style={styles.cardName}>{item.name}</Text>
         <Text style={styles.cardPoints}>{item.points.toLocaleString()} pts</Text>
-        <View style={[styles.cardAdd, isSelected && styles.cardAddSelected]}>
-          <Text style={styles.cardAddText}>{isSelected ? '-' : '+'}</Text>
+        <View
+          style={[
+            styles.cardAdd,
+            isSelected && styles.cardAddSelected,
+            isDisabled && styles.cardAddDisabled,
+          ]}
+        >
+          <Text style={styles.cardAddText}>{isDisabled ? '!' : isSelected ? '-' : '+'}</Text>
         </View>
+        {isDisabled && <Text style={styles.lockText}>points insuffisants</Text>}
       </TouchableOpacity>
     );
   };
 
+  const handleValidate = () => {
+    const selected = [...badges, ...avatars].filter((item) =>
+      selectedItems.includes(item.id)
+    );
+
+    navigation.navigate('ConfirmPurchase', {
+      selectedItems: selected,
+      onPurchase: (purchasedIds: string[]) => {
+        setPurchasedItems((prev) => [...prev, ...purchasedIds]);
+        setSelectedItems([]);
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Image source={require('../assets/avatar.png')} style={styles.avatar} />
         <View style={styles.rightHeader}>
-          <Ionicons name="pricetag" size={20} color="#fff" style={styles.pointsIcon} />
-          <Text style={styles.points}>1190</Text>
+          <Ionicons name="pricetag" size={20} color="#fff" />
+          <Text style={styles.points}>{userPoints}</Text>
         </View>
       </View>
 
       <Text style={styles.date}>Vendredi, 29 Dec</Text>
 
-      {/* Search */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.input}
@@ -95,7 +127,6 @@ const StoreScreen = () => {
         <Ionicons name="filter-outline" size={20} color="#555" />
       </View>
 
-      {/* Filter Tabs */}
       <View style={styles.filterTabs}>
         {filters.map((f) => (
           <TouchableOpacity
@@ -123,7 +154,7 @@ const StoreScreen = () => {
       {selectedItems.length > 0 && (
         <View style={styles.cartBar}>
           <Text style={styles.cartText}>{selectedItems.length} élément(s) sélectionné(s)</Text>
-          <TouchableOpacity style={styles.cartButton}>
+          <TouchableOpacity style={styles.cartButton} onPress={handleValidate}>
             <Text style={styles.cartButtonText}>Valider</Text>
           </TouchableOpacity>
         </View>
@@ -159,9 +190,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 20,
     gap: 6,
-  },
-  pointsIcon: {
-    color: '#fff',
   },
   points: {
     color: '#fff',
@@ -229,6 +257,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#7A4CD9',
   },
+  cardDisabled: {
+    opacity: 0.5,
+  },
   cardImage: {
     width: 56,
     height: 56,
@@ -256,10 +287,19 @@ const styles = StyleSheet.create({
   cardAddSelected: {
     backgroundColor: '#7A4CD9',
   },
+  cardAddDisabled: {
+    backgroundColor: '#ccc',
+  },
   cardAddText: {
     fontSize: 18,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  lockText: {
+    marginTop: 6,
+    fontSize: 11,
+    color: '#D32F2F',
+    fontWeight: '500',
   },
   cartBar: {
     position: 'absolute',

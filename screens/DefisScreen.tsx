@@ -3,10 +3,11 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   Image,
-  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -23,11 +24,17 @@ const DefisScreen = () => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      {/* Header Fixe */}
-      <Text style={styles.header}>Together</Text>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.header}>Together</Text>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         {/* Profil */}
         <View style={styles.profileCard}>
           <Image source={require('../assets/profile_icon.png')} style={styles.profileIcon} />
@@ -41,12 +48,15 @@ const DefisScreen = () => {
             onPress={() => navigation.navigate('Friends', { defaultTab: 'Friends' })}
           >
             <Text style={styles.label}>Amis</Text>
-            <Text style={[styles.value]}>9</Text>
+            <Text style={styles.value}>9</Text>
           </TouchableOpacity>
         </View>
 
         {/* Créer un défi */}
-        <TouchableOpacity style={styles.createBtn}>
+        <TouchableOpacity
+          style={styles.createBtn}
+          onPress={() => navigation.navigate('CreateDefi')}
+        >
           <Text style={styles.createBtnText}>Créer un défi</Text>
         </TouchableOpacity>
 
@@ -70,16 +80,18 @@ const DefisScreen = () => {
         </TouchableOpacity>
 
         {/* Défi populaire */}
-        <TouchableOpacity style={styles.challengeCard} onPress={() => navigation.navigate('DefiParcours')}>
+        <TouchableOpacity style={styles.challengeCard}>
           <View style={{ flex: 1 }}>
             <Text style={styles.challengeTitle}>Désert, avril</Text>
             <Text style={styles.challengeDesc}>Rejoignez-nous et restons actifs ensemble.</Text>
-            <Text style={styles.stepCount}>Total des pas : <Text style={{ fontWeight: 'bold' }}>17 840</Text></Text>
+            <Text style={styles.stepCount}>
+              Total des pas : <Text style={{ fontWeight: 'bold' }}>17 840</Text>
+            </Text>
           </View>
           <Image source={require('../assets/defis_logo.png')} style={styles.challengeImage} />
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

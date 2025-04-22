@@ -28,7 +28,8 @@ const BadgeProfileScreen = () => {
         </View>
         <View style={styles.statsRow}>
           <TouchableOpacity style={styles.statsBtn}>
-            <Text style={styles.statsText}>177 amis</Text>
+            <Text style={styles.statsText}             onPress={() => navigation.navigate('Friends', { defaultTab: 'Friends' })}
+            >9 amis</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.statsBtn}>
             <Text style={styles.statsText}>Mon code QR</Text>

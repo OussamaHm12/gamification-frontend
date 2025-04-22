@@ -11,6 +11,8 @@ import BadgeProfileScreen from '../screens/BadgeProfileScreen';
 import NiveauScreen from '../screens/NiveauScreen';
 import FriendsScreen from '../screens/FriendsScreen';
 import DefiParcoursScreen from '../screens/DefiParcoursScreen';
+import ConfirmPurchaseScreen from '../screens/ConfirmPurchaseScreen';
+import CreateDefiScreen from '../screens/CreateDefiScreen';
 
 
 export type RootStackParamList = {
@@ -41,6 +43,12 @@ const RootNavigator = () => {
       <Stack.Screen name="Niveau" component={NiveauScreen} />    
       <Stack.Screen name="Friends" component={FriendsScreen} />
       <Stack.Screen name="DefiParcours" component={DefiParcoursScreen} />
+      <Stack.Screen name="ConfirmPurchase" component={ConfirmPurchaseScreen} options={{ headerShown: false }}/>
+      <Stack.Screen
+  name="CreateDefi"
+  component={CreateDefiScreen}
+  options={{ headerShown: true, title: 'Créer un défi' }}
+/>
       </Stack.Navigator>
   );
 };
