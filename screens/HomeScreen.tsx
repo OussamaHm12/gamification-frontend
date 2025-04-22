@@ -104,20 +104,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </ScrollView>
 
-        {/* 🎖️ Badges récents
-        <Text style={styles.sectionTitle}>Badges récents</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {recentBadges.map((badge) => (
-            <TouchableOpacity
-              key={badge.id}
-              style={styles.badgeCard}
-              onPress={() => navigation.navigate('BadgeProfile')}
-            >
-              <Image source={badge.icon} style={styles.badgeImage} />
-              <Text style={styles.badgeName}>{badge.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView> */}
+        
       </ScrollView>
     </View>
   );

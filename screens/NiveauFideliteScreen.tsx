@@ -22,7 +22,7 @@ const currentLevel = 'Or';
 const currentPoints = 1190;
 const nextLevelThreshold = 1500;
 
-const NiveauScreen = () => {
+const NiveauFideliteScreen = () => {
   const navigation = useNavigation();
   const progressPercent = (currentPoints / nextLevelThreshold) * 100;
 
@@ -64,7 +64,7 @@ const NiveauScreen = () => {
   );
 };
 
-export default NiveauScreen;
+export default NiveauFideliteScreen;
 
 const styles = StyleSheet.create({
   container: {

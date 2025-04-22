@@ -15,7 +15,7 @@ const personalChallenges = [
   { id: '2', name: '5 factures cette semaine', progress: 40 },
 ];
 
-const DefiDetailScreen = () => {
+const DefiPersDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const defiId = route.params?.defiId ?? personalChallenges[0].id;
@@ -96,7 +96,7 @@ const DefiDetailScreen = () => {
   );
 };
 
-export default DefiDetailScreen;
+export default DefiPersDetailScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9F5F1', paddingTop: 50, paddingHorizontal: 20 },

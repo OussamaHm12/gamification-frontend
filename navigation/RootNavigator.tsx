@@ -3,14 +3,12 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // import OnboardingScreen from '../screens/OnboardingScreen';
 import TabNavigator from './TabNavigator';
-import FacturesScreen from '../screens/FacturesScreen';
-import VirementsScreen from '../screens/VirementsScreen';
-import InteractionsScreen from '../screens/InteractionsScreen'; // ou le bon chemin selon ton projet
-import DefiDetailScreen from '../screens/DefiDetailScreen';
-import BadgeProfileScreen from '../screens/BadgeProfileScreen';
-import NiveauScreen from '../screens/NiveauScreen';
-import FriendsScreen from '../screens/FriendsScreen';
-import DefiParcoursScreen from '../screens/DefiParcoursScreen';
+import InteractionsScreen from '../screens/OperationsScreen'; // ou le bon chemin selon ton projet
+import DefiDetailScreen from '../screens/DefiPersDetailScreen';
+import BadgeProfileScreen from '../screens/MaPage';
+import NiveauScreen from '../screens/NiveauFideliteScreen';
+import FriendsScreen from '../screens/FriendsLeaderboardScreen';
+import DefiParcoursScreen from '../screens/DefiRoadMapScreen';
 import ConfirmPurchaseScreen from '../screens/ConfirmPurchaseScreen';
 import CreateDefiScreen from '../screens/CreateDefiScreen';
 
@@ -35,8 +33,6 @@ const RootNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Root">
       {/* <Stack.Screen name="Onboarding" component={OnboardingScreen} /> */}
       <Stack.Screen name="Root" component={TabNavigator} />
-      <Stack.Screen name="Factures" component={FacturesScreen} />
-      <Stack.Screen name="Virements" component={VirementsScreen} />
       <Stack.Screen name="Interactions" component={InteractionsScreen} />
       <Stack.Screen name="DefiDetail" component={DefiDetailScreen} />
       <Stack.Screen name="BadgeProfile" component={BadgeProfileScreen} />

@@ -20,7 +20,7 @@ const leaderboard = [
   { name: 'Achraf', avatar: require('../assets/avatar5.png'), steps: 7600 },
 ];
 
-const DefisScreen = () => {
+const TogetherScreen = () => {
   const navigation = useNavigation();
 
   return (
@@ -95,7 +95,7 @@ const DefisScreen = () => {
   );
 };
 
-export default DefisScreen;
+export default TogetherScreen;
 
 const styles = StyleSheet.create({
   container: {

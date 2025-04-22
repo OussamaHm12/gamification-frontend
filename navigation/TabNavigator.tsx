@@ -1,10 +1,10 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../screens/HomeScreen';
-import DefisScreen from '../screens/DefisScreen';
+import DefisScreen from '../screens/TogetherScreen';
 import StoreScreen from '../screens/StoreScreen';
 // ✅ Remplace EnsembleScreen par BadgeProfileScreen
-import BadgeProfileScreen from '../screens/BadgeProfileScreen';
+import BadgeProfileScreen from '../screens/MaPage';
 import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();

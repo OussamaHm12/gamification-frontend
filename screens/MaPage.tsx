@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const BadgeProfileScreen = () => {
+const MaPage = () => {
   const navigation = useNavigation();
 
   return (
@@ -59,7 +59,7 @@ const BadgeProfileScreen = () => {
   );
 };
 
-export default BadgeProfileScreen;
+export default MaPage;
 
 const styles = StyleSheet.create({
   container: {

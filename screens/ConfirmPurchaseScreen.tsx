@@ -41,7 +41,7 @@ const ConfirmPurchaseScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🎯 Confirmation d'achat</Text>
+      <Text style={styles.title}>Confirmation d'achat</Text>
 
       {!confirmed ? (
         <>
@@ -66,7 +66,7 @@ const ConfirmPurchaseScreen = () => {
         </>
       ) : (
         <Animatable.View animation="bounceIn" duration={1000} style={styles.successBox}>
-          <Text style={styles.successEmoji}>🎉</Text>
+          <Text style={styles.successEmoji}></Text>
           <Text style={styles.successText}>Félicitations !</Text>
           <Text style={styles.successSub}>Votre achat a été confirmé</Text>
         </Animatable.View>

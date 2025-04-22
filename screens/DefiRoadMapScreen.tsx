@@ -13,7 +13,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
-const DefiParcoursScreen = () => {
+const DefiRoadMapScreen = () => {
   const navigation = useNavigation();
 
   return (
@@ -83,7 +83,7 @@ const DefiParcoursScreen = () => {
   );
 };
 
-export default DefiParcoursScreen;
+export default DefiRoadMapScreen;
 
 const { width } = Dimensions.get('window');
 

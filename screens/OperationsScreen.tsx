@@ -42,7 +42,7 @@ const allData = [
 
 const filterOptions = ['Tous', 'Factures', 'Carte', 'Virements'];
 
-const InteractionsScreen = () => {
+const OperationsScreen = () => {
   
   const route = useRoute();
   const initialFilter = route.params?.filter || 'Tous';
@@ -129,7 +129,7 @@ const InteractionsScreen = () => {
   );
 };
 
-export default InteractionsScreen;
+export default OperationsScreen;
 
 const styles = StyleSheet.create({
   container: {

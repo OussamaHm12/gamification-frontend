@@ -92,15 +92,6 @@ const CreateDefiScreen = () => {
           <View style={styles.stat}><Text style={styles.statTitle}>Moyenne</Text><Text style={styles.statValue}>{selectedDefi.moyenne}</Text></View>
           <View style={styles.stat}><Text style={styles.statTitle}>Meilleur</Text><Text style={styles.statValue}>{selectedDefi.meilleur}</Text></View>
         </View>
-
-        {/* Classement intégré */}
-        <Text style={styles.sectionTitle}>Classement</Text>
-        {[{ name: 'Anas', pts: 75 }, { name: 'Bachir', pts: 60 }, { name: 'Sofia', pts: 55 }].map((p, i) => (
-          <View key={i} style={styles.rankingRow}>
-            <Text>{['🥇', '🥈', '🥉'][i]} {p.name}</Text>
-            <Text style={{ fontWeight: 'bold' }}>{p.pts} pts</Text>
-          </View>
-        ))}
       </View>
 
       {/* Autres Défis */}

@@ -21,7 +21,7 @@ const friends = [
   { name: 'saad barga', avatar: require('../assets/avatar1.png'), steps: 0 },
 ];
 
-const FriendsScreen = () => {
+const FriendsLeaderboardScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [selectedTab, setSelectedTab] = useState<'Leaderboard' | 'Friends'>('Leaderboard');
@@ -117,7 +117,7 @@ const FriendsScreen = () => {
   );
 };
 
-export default FriendsScreen;
+export default FriendsLeaderboardScreen;
 
 const styles = StyleSheet.create({
   container: {
