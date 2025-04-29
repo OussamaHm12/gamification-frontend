@@ -1,4 +1,4 @@
-// ✅ screens/DefiParcoursScreen.tsx
+// ✅ screens/DefiRoadMapScreen.tsx
 import React from 'react';
 import {
   View,
@@ -13,6 +13,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
+// Correction : typer proprement les étapes
+const steps: { id: number; label: string; x: number | string; y: number | string }[] = [
+  { id: 1, label: '10k', x: '20%', y: '70%' },
+  { id: 2, label: '35k', x: '50%', y: '50%' },
+  { id: 3, label: '70k', x: '75%', y: '30%' },
+];
+
 const DefiRoadMapScreen = () => {
   const navigation = useNavigation();
 
@@ -23,59 +30,56 @@ const DefiRoadMapScreen = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.title}>Desert, April</Text>
+        <Text style={styles.title}>Désert, Avril</Text>
         <View style={{ width: 24 }} />
       </View>
 
-      {/* Image avec chemin */}
-      <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* Carte */}
         <ImageBackground
-          source={require('../assets/desert_map.png')} // 🔁 remplace par ton image de fond
+          source={require('../assets/bg_map.png')} // Ton image ici
           style={styles.map}
-          imageStyle={{ resizeMode: 'cover', borderRadius: 20 }}
         >
-          {/* Étapes */}
-          <View style={[styles.step, { top: '85%', left: '10%' }]}>
-            <Image source={require('../assets/star.png')} style={styles.stepIcon} />
-            <Text style={styles.stepText}>20K</Text>
-          </View>
-          <View style={[styles.step, { top: '75%', left: '30%' }]}>
-            <Image source={require('../assets/star.png')} style={styles.stepIcon} />
-            <Text style={styles.stepText}>35K</Text>
-          </View>
-          <View style={[styles.step, { top: '60%', left: '50%' }]}>
-            <Image source={require('../assets/star.png')} style={styles.stepIcon} />
-            <Text style={styles.stepText}>70K</Text>
-          </View>
-          <View style={[styles.step, { top: '45%', left: '20%' }]}>
-            <Image source={require('../assets/star.png')} style={styles.stepIcon} />
-            <Text style={styles.stepText}>100K</Text>
-          </View>
-          <View style={[styles.step, { top: '30%', left: '60%' }]}>
-            <Image source={require('../assets/star.png')} style={styles.stepIcon} />
-            <Text style={styles.stepText}>150K</Text>
-          </View>
-          <View style={[styles.step, { top: '10%', left: '40%' }]}>
-            <Image source={require('../assets/star.png')} style={styles.stepIcon} />
-            <Text style={styles.stepText}>200K</Text>
+          {/* Départ */}
+          <View style={[styles.marker, { top: '90%', left: '5%' }]}>
+            <Text style={styles.markerText}>🚩</Text>
           </View>
 
-          {/* Position actuelle de l'utilisateur */}
+          {/* Étapes */}
+          {steps.map((step) => (
+            <View
+              key={step.id}
+              style={[
+                styles.step,
+                { top: step.y as any, left: step.x as any },
+              ]}
+            >
+              <Text style={styles.stepText}>{step.label}</Text>
+            </View>
+          ))}
+
+
+          {/* Avatar joueur */}
           <Image
-            source={require('../assets/avatar_green.png')} // 🔁 avatar vert à préparer
-            style={[styles.avatar, { top: '60%', left: '50%' }]}
+            source={require('../assets/avatar1.png')}
+            style={[styles.avatar, { top: '50%', left: '48%' }]} // Position de ton avatar actuelle
           />
+
+          {/* Arrivée */}
+          <View style={[styles.marker, { top: '5%', left: '90%' }]}>
+            <Text style={styles.markerText}>🏁</Text>
+          </View>
         </ImageBackground>
 
         {/* Statistiques */}
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
             <Text style={styles.statTitle}>Achievements</Text>
-            <Text style={styles.statValue}>17,840</Text>
+            <Text style={styles.statValue}>48,582</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statTitle}>Rankings</Text>
-            <Text style={styles.statValue}>834,083ᵉ</Text>
+            <Text style={styles.statTitle}>Ranking</Text>
+            <Text style={styles.statValue}>838,628</Text>
           </View>
         </View>
       </ScrollView>
@@ -105,28 +109,44 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   map: {
-    width: '100%',
+    width: width - 40,
     height: 400,
-    justifyContent: 'flex-start',
+    resizeMode: 'cover',
+    borderRadius: 20,
+    overflow: 'hidden',
     position: 'relative',
+  },
+  marker: {
+    position: 'absolute',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 6,
+    elevation: 4,
+  },
+  markerText: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   step: {
     position: 'absolute',
+    backgroundColor: '#7A4CD9',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
-  },
-  stepIcon: {
-    width: 24,
-    height: 24,
+    justifyContent: 'center',
   },
   stepText: {
-    fontSize: 12,
+    color: '#fff',
     fontWeight: 'bold',
-    color: '#000',
+    fontSize: 12,
   },
   avatar: {
     position: 'absolute',
     width: 36,
     height: 36,
+    borderRadius: 18,
+    resizeMode: 'contain',
   },
   statsContainer: {
     backgroundColor: '#fff',

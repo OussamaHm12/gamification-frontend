@@ -80,15 +80,17 @@ const TogetherScreen = () => {
         </TouchableOpacity>
 
         {/* Défi populaire */}
-        <TouchableOpacity style={styles.challengeCard}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.challengeTitle}>Désert, avril</Text>
-            <Text style={styles.challengeDesc}>Rejoignez-nous et restons actifs ensemble.</Text>
-            <Text style={styles.stepCount}>
-              Total des pas : <Text style={{ fontWeight: 'bold' }}>17 840</Text>
-            </Text>
-          </View>
-          <Image source={require('../assets/defis_logo.png')} style={styles.challengeImage} />
+        <TouchableOpacity 
+            onPress={() => navigation.navigate('DefiParcours', { tab: 'DefiRoadMapScreen' })}
+            style={styles.challengeCard}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.challengeTitle}>Désert, avril</Text>
+                <Text style={styles.challengeDesc}>Rejoignez-nous et restons actifs ensemble.</Text>
+                <Text style={styles.stepCount}>
+                  Total des pas : <Text style={{ fontWeight: 'bold' }}>17 840</Text>
+                </Text>
+              </View>
+              <Image source={require('../assets/defis_logo.png')} style={styles.challengeImage} />
         </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>

@@ -13,12 +13,12 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 
 
 const friends = [
-  { name: 'El ALAOUI Rachid', avatar: require('../assets/avatar1.png'), steps: 55544 },
-  { name: 'mansouri anas', avatar: require('../assets/avatar2.png'), steps: 50245 },
-  { name: 'Faudali mohammed', avatar: require('../assets/avatar3.png'), steps: 35532 },
-  { name: 'You', avatar: require('../assets/avatar4.png'), steps: 17840 },
-  { name: 'salik el bachir', avatar: require('../assets/avatar5.png'), steps: 0 },
-  { name: 'saad barga', avatar: require('../assets/avatar1.png'), steps: 0 },
+  { name: 'El ALAOUI Rachid', avatar: require('../assets/avatar1.png'), points: 55544 },
+  { name: 'mansouri anas', avatar: require('../assets/avatar2.png'), points: 50245 },
+  { name: 'Faudali mohammed', avatar: require('../assets/avatar3.png'), points: 35532 },
+  { name: 'You', avatar: require('../assets/avatar4.png'), points: 17840 },
+  { name: 'salik el bachir', avatar: require('../assets/avatar5.png'), points: 0 },
+  { name: 'saad barga', avatar: require('../assets/avatar1.png'), points: 0 },
 ];
 
 const FriendsLeaderboardScreen = () => {
@@ -33,8 +33,8 @@ const FriendsLeaderboardScreen = () => {
     }
   }, [route.params]);
 
-  const sorted = [...friends].sort((a, b) => b.steps - a.steps);
-  const maxSteps = Math.max(...friends.map((f) => f.steps));
+  const sorted = [...friends].sort((a, b) => b.points - a.points);
+  const maxpoints = Math.max(...friends.map((f) => f.points));
 
   return (
     <View style={styles.container}>
@@ -69,7 +69,7 @@ const FriendsLeaderboardScreen = () => {
         <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
           <Text style={styles.rankText}>Your rank: 4th</Text>
           <Text style={styles.hintText}>
-            You're behind by 17,692 steps. Keep going to catch up to Zakariae ELOMARI!
+            You're behind by 17,692 points. Keep going to catch up to Zakariae ELOMARI!
           </Text>
 
           {/* Podium */}
@@ -79,7 +79,7 @@ const FriendsLeaderboardScreen = () => {
                 <Image source={friend.avatar} style={styles.barAvatar} />
                 <View style={styles.barTrack}>
                   <View
-                    style={[styles.barFill, { height: `${(friend.steps / maxSteps) * 100}%` }]}
+                    style={[styles.barFill, { height: `${(friend.points / maxpoints) * 100}%` }]}
                   />
                 </View>
                 <Text numberOfLines={1} style={styles.barName}>
@@ -96,7 +96,7 @@ const FriendsLeaderboardScreen = () => {
                 <Text style={styles.rankIndex}>{index + 1}</Text>
                 <Image source={friend.avatar} style={styles.rankAvatar} />
                 <Text style={styles.rankName}>{friend.name}</Text>
-                <Text style={styles.rankSteps}>{friend.steps} Steps</Text>
+                <Text style={styles.rankpoints}>{friend.points} points</Text>
               </View>
             ))}
           </View>
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
   },
-  rankSteps: {
+  rankpoints: {
     fontWeight: 'bold',
     color: '#333',
   },

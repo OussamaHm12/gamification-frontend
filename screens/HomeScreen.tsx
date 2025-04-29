@@ -11,6 +11,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/RootNavigator';
+import { useEffect, useState } from 'react';
+import { getTotalPoints } from '../services/pointsService';
+
+
 
 const recentBadges = [
   { id: '1', name: 'Virement Hero', icon: require('../assets/badge1.png') },
@@ -24,6 +28,21 @@ const personalChallenges = [
 
 const HomeScreen = () => {
   const navigation = useNavigation() as NativeStackNavigationProp<RootStackParamList>;
+  const [totalPoints, setTotalPoints] = useState<number | null>(null);
+
+useEffect(() => {
+  const fetchPoints = async () => {
+    try {
+      const total = await getTotalPoints(1); // utilisateur test
+      setTotalPoints(total);
+    } catch (error) {
+      console.error('Erreur en récupérant les points :', error);
+    }
+  };
+
+  fetchPoints();
+}, []);
+
   const today = new Date();
   const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
   const monthNames = ['Jan', 'Fév', 'Mars', 'Avr', 'Mai', 'Juin', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
@@ -37,9 +56,12 @@ const HomeScreen = () => {
           <Text style={styles.date}>{formattedDate}</Text>
         </View>
         <TouchableOpacity style={styles.pointsBox} onPress={() => navigation.navigate('Store')}>
-          <Ionicons name="pricetag" size={18} color="#fff" />
-          <Text style={styles.points}>1190</Text>
-        </TouchableOpacity>
+  <Ionicons name="pricetag" size={18} color="#fff" />
+  <Text style={styles.points}>
+    {totalPoints !== null ? Math.floor(totalPoints) : '...'}
+  </Text>
+</TouchableOpacity>
+
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 100 }}>
