@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useEffect  } from 'react';
 import {
   View,
   Text,
@@ -8,18 +8,13 @@ import {
   Image,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/RootNavigator';
-import { useEffect, useState } from 'react';
 import { getTotalPoints } from '../services/pointsService';
+import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 
 
-
-const recentBadges = [
-  { id: '1', name: 'Virement Hero', icon: require('../assets/badge1.png') },
-  { id: '2', name: 'Epargne Master', icon: require('../assets/badge2.png') },
-];
 
 const personalChallenges = [
   { id: '1', name: '20 virements en 30 jours', current: 12, total: 20, progress: 60 },
@@ -28,20 +23,23 @@ const personalChallenges = [
 
 const HomeScreen = () => {
   const navigation = useNavigation() as NativeStackNavigationProp<RootStackParamList>;
-  const [totalPoints, setTotalPoints] = useState<number | null>(null);
+  const [userPoints, setUserPoints] = useState<number>(0);
 
-useEffect(() => {
-  const fetchPoints = async () => {
+  const fetchUserPoints = async () => {
     try {
-      const total = await getTotalPoints(1); // utilisateur test
-      setTotalPoints(total);
+      const total = await getTotalPoints(1); // id utilisateur en dur
+      setUserPoints(total);
     } catch (error) {
       console.error('Erreur en récupérant les points :', error);
     }
   };
-
-  fetchPoints();
-}, []);
+  
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserPoints();
+    }, [])
+  );
+  
 
   const today = new Date();
   const dayNames = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
@@ -56,16 +54,15 @@ useEffect(() => {
           <Text style={styles.date}>{formattedDate}</Text>
         </View>
         <TouchableOpacity style={styles.pointsBox} onPress={() => navigation.navigate('Store')}>
-  <Ionicons name="pricetag" size={18} color="#fff" />
-  <Text style={styles.points}>
-    {totalPoints !== null ? Math.floor(totalPoints) : '...'}
-  </Text>
-</TouchableOpacity>
+          <Ionicons name="pricetag" size={18} color="#fff" />
+          <Text style={styles.points}>
+          {userPoints.toFixed(1)}
+          </Text>
+        </TouchableOpacity>
 
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* 🎮 Bloc Fidélité style gaming avec redirection */}
         <Text style={styles.sectionTitle}>Niveau et Points</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Niveau')}>
           <View style={styles.gamingBox}>
@@ -84,7 +81,6 @@ useEffect(() => {
           </View>
         </TouchableOpacity>
 
-        {/* 🔥 Challenges personnels - Nouveau design */}
         <Text style={styles.sectionTitle}>Challenges personnels</Text>
         {personalChallenges.map((challenge) => (
           <TouchableOpacity
@@ -106,7 +102,6 @@ useEffect(() => {
           </TouchableOpacity>
         ))}
 
-        {/* 💳 Opérations */}
         <Text style={styles.sectionTitle}>Mes opérations</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
           <TouchableOpacity style={styles.hCard} onPress={() => navigation.navigate('Interactions', { filter: 'Factures' })}>
@@ -125,14 +120,13 @@ useEffect(() => {
             <Text style={styles.hCardValue}>7</Text>
           </TouchableOpacity>
         </ScrollView>
-
-        
       </ScrollView>
     </View>
   );
 };
 
 export default HomeScreen;
+
 
 
 const styles = StyleSheet.create({

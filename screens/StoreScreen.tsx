@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -10,37 +10,56 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-
-const badges = [
-  { id: '1', name: 'Virement Hero', points: 500, icon: require('../assets/badge1.png') },
-  { id: '2', name: 'Epargne Master', points: 8000, icon: require('../assets/badge2.png') },
-];
-
-const avatars = [
-  { id: '3', name: 'Carte Maestro', points: 10000, icon: require('../assets/avatar1.png') },
-  { id: '4', name: 'Epargnant Express', points: 10000, icon: require('../assets/avatar2.png') },
-];
-
-const filters = ['populaire', 'haut', 'nouveau'];
-
-type ItemType = {
-  id: string;
-  name: string;
-  points: number;
-  icon: any;
-};
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { getStoreItems } from '../services/storeService';
+import type { StoreItem } from '../types/types';
+import { getTotalPoints } from '../services/pointsService';
 
 const StoreScreen = () => {
+  const [badges, setBadges] = useState<StoreItem[]>([]);
+  const [avatars, setAvatars] = useState<StoreItem[]>([]);
+  const [userPoints, setUserPoints] = useState<number>(0);
+
+  const filters = ['populaire', 'haut', 'nouveau'];
+
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('populaire');
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [purchasedItems, setPurchasedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [purchasedItems, setPurchasedItems] = useState<number[]>([]);
 
-  const userPoints = 1190;
+  const fetchUserPoints = async () => {
+    try {
+      const total = await getTotalPoints(1); // id utilisateur en dur
+      setUserPoints(total);
+    } catch (error) {
+      console.error('Erreur en récupérant les points :', error);
+    }
+  };
+  
 
-  const handleToggleSelect = (id: string) => {
+  const fetchStoreItems = async () => {
+    try {
+      const items = await getStoreItems();
+      const badgeItems = items.filter(item => item.type === 'BADGE');
+      const avatarItems = items.filter(item => item.type === 'AVATAR');
+
+      setBadges(badgeItems);
+      setAvatars(avatarItems);
+    } catch (error) {
+      console.error('Erreur lors du chargement du store :', error);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchStoreItems();
+      fetchUserPoints();
+    }, [])
+  );
+  
+
+  const handleToggleSelect = (id: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setSelectedItems((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -59,9 +78,9 @@ const StoreScreen = () => {
       item.name.toLowerCase().includes(search.toLowerCase())
   );
 
-  const renderCard = (item: ItemType) => {
+  const renderCard = (item: StoreItem) => {
     const isSelected = selectedItems.includes(item.id);
-    const isDisabled = item.points > userPoints;
+    const isDisabled = item.price > userPoints;
 
     return (
       <TouchableOpacity
@@ -74,9 +93,9 @@ const StoreScreen = () => {
         onPress={() => !isDisabled && handleToggleSelect(item.id)}
         activeOpacity={isDisabled ? 1 : 0.8}
       >
-        <Image source={item.icon} style={styles.cardImage} />
+        <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
         <Text style={styles.cardName}>{item.name}</Text>
-        <Text style={styles.cardPoints}>{item.points.toLocaleString()} pts</Text>
+        <Text style={styles.cardPoints}>{item.price.toLocaleString()} pts</Text>
         <View
           style={[
             styles.cardAdd,
@@ -98,7 +117,7 @@ const StoreScreen = () => {
 
     navigation.navigate('ConfirmPurchase', {
       selectedItems: selected,
-      onPurchase: (purchasedIds: string[]) => {
+      onPurchase: (purchasedIds: number[]) => {
         setPurchasedItems((prev) => [...prev, ...purchasedIds]);
         setSelectedItems([]);
       },
@@ -164,6 +183,7 @@ const StoreScreen = () => {
 };
 
 export default StoreScreen;
+
 
 const styles = StyleSheet.create({
   container: {
